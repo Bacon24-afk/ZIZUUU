@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBD My Enemyy✨🌸</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Playfair+Display:ital,wght@1,400;1,700&family=Montserrat:wght@300;500;600&family=Gaegu:wght@700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --rose-gold: #da627d;
+            --pink-sakura: #ffb7c5;
+            --creamy: #fff5f7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body, html { 
+            height: 100%; width: 100%; 
+            overflow: hidden; 
+            font-family: 'Montserrat', sans-serif;
+            background: #000;
+        }
+
+        /* --- INTRO OVERLAY --- */
+        #intro {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            background-image: url('assets/images/Gemini_Generated_Image_e50ebbe50ebbe50e.png'); 
+            background-size: cover;
+            background-position: center;
+            transition: all 1s ease;
+        }
+
+        .btn-start {
+            margin-top: 250px;
+            background: #da627d;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 50px;
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 15px rgba(218, 98, 125, 0.4);
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.05);
+            background: #c02c47;
+        }
+
+        /* --- COUNTDOWN --- */
+        #countdown-overlay {
+            position: fixed; inset: 0; z-index: 2500;
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: radial-gradient(circle at center, #3d141d 0%, #1a0509 100%);
+            color: var(--rose-gold);
+            transition: opacity 0.5s;
+        }
+
+        #num {
+            font-family: 'Gaegu', cursive;
+            font-size: 10rem;
+            line-height: 1;
+            animation: bounceNum 1s infinite;
+        }
+
+        @keyframes bounceNum {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(5deg); }
+        }
+
+        /* --- BACKGROUND SYSTEM --- */
+        #bg-system {
+            position: fixed; inset: 0; z-index: 1;
+        }
+
+        .bg-full {
+            position: absolute; inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            filter: brightness(0.6);
+            transition: opacity 2s ease-in-out, transform 10s linear;
+            transform: scale(1.2);
+        }
+
+        .bg-full.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        /* --- SAKURA FLOWERS --- */
+        .sakura {
+            position: absolute; background: var(--pink-sakura);
+            border-radius: 100% 0 100% 0; opacity: 0.6;
+            pointer-events: none; z-index: 5;
+            animation: sakuraFall linear infinite;
+        }
+        @keyframes sakuraFall {
+            0% { top: -10%; transform: translateX(0) rotate(0deg); }
+            100% { top: 110%; transform: translateX(120px) rotate(360deg); }
+        }
+
+        /* --- STAGE & SLIDES --- */
+        #stage {
+            height: 100vh; width: 100vw;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 10;
+        }
+
+        .slide {
+            position: absolute; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden;
+            transition: opacity 1.2s ease, transform 1.2s ease;
+            text-align: center; width: 90%;
+            transform: translateY(20px);
+        }
+
+        .slide.active { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateY(0);
+        }
+
+        .doll-img {
+            width: 180px; height: auto;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+            margin-bottom: 20px;
+            animation: slowFloat 5s infinite ease-in-out;
+        }
+
+        @keyframes slowFloat {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+
+        .wish-container { 
+            text-align: center; 
+            max-width: 650px; 
+            padding: 30px; 
+            min-height: 180px;
+            background: rgba(0, 0, 0, 0.3); /* Transparansi background teks */
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 183, 197, 0.2);
+        }
+        
+        .tagline { 
+            font-family: 'Syne', sans-serif; font-size: 13px; color: var(--pink-sakura); 
+            letter-spacing: 5px; margin-bottom: 15px;
+        }
+
+        .wish { 
+            font-family: 'Playfair Display', serif; 
+            font-style: italic; 
+            font-size: 22px; 
+            line-height: 1.7; 
+            color: #ffffff; 
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* --- FINAL SCREEN --- */
+        #final-screen {
+            position: fixed; inset: 0; z-index: 3000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px);
+            text-align: center; padding: 40px;
+        }
+        #final-screen.active { display: flex; animation: fadeInFinal 2s ease; }
+        .hbd-title { font-family: 'Playfair Display', serif; font-size: 3.5rem; color: var(--rose-gold); margin-bottom: 15px; }
+
+        @keyframes fadeInFinal { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div id="intro">
+        <button class="btn-start" onclick="startCountdown()">OPEN GIFT 🎁</button>
+    </div>
+
+    <div id="countdown-overlay">
+        <div id="num">3</div>
+        <div id="cd-text">Ready? Get comfy!</div>
+    </div>
+
+    <div id="bg-system">
+        <div class="bg-full" id="bg0" style="background-image: url('assets/images/bg-1.png');"></div>
+        <div class="bg-full" id="bg1" style="background-image: url('assets/images/bg-2.png');"></div>
+        <div class="bg-full" id="bg2" style="background-image: url('assets/images/bg-3.png');"></div>
+    </div>
+
+    <main id="stage">
+        <div class="slide" id="s0">
+            <div class="wish-container">
+                <p class="tagline">Hallo Jelek</p>
+                <p class="wish" id="type0"></p>
+            </div>
+        </div>
+
+        <div class="slide" id="s1">
+            <div class="wish-container">
+                <p class="tagline"></p>
+                <p class="wish" id="type1"></p>
+            </div>
+        </div>
+
+        <div class="slide" id="s2">
+            <img src="assets/images/bacon.png" class="doll-img">
+            <div class="wish-container">
+                <p class="tagline">19 April 2026</p>
+                <p class="wish" id="type2"></p>
+            </div>
+        </div>
+
+        <div id="final-screen">
+            <h1 class="hbd-title">HAPPY BIRTHDAY ZIZU❤️</h1>
+            <p style="color: white; font-size: 14px; letter-spacing: 2px;"></p>
+        </div>
+    </main>
+
+    <audio id="music" loop><source src="assets/music/lagu-2.mp3"></audio>
+
+    <script>
+        let current = 0;
+        const totalSlides = 3;
+        const funnyTexts = ["Are you ready?", "Wait for it...", "Almost there!", "Z'S Days🦋"];
+        
+        const wishes = [
+            "Selamat bertambah usia semoga panjang umur, sehat selalu dilancarkan rezekinya, semua yang diimpikan tercapai dan selalu dikelilingi sama orang-orang baik yang sayang sama kamu.",
+            "Makin dewasa biasanya makin banyak tanggung jawab, tapi jangan lupa buat tetap bahagia dan sesekali manjain diri sendiri. Kamu berhak dapetin semua hal baik di dunia ini setelah semua kerja keras yang kamu lakuin.",
+            "Engga kerasa kenal kamu selama setengah tahun ini, Makasih ya udah sering nemenin mabar dan dengerin cerita-cerita nggak jelas. Semoga temenan kita nggak cuma di game aja, tapi awet terus ke depannya"
+        ];
+
+        function startCountdown() {
+            const intro = document.getElementById('intro');
+            const cdBox = document.getElementById('countdown-overlay');
+            const numDisplay = document.getElementById('num');
+            const textDisplay = document.getElementById('cd-text');
+
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                cdBox.style.display = 'flex';
+                
+                let count = 3;
+                let timer = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        numDisplay.innerText = count;
+                        textDisplay.innerText = funnyTexts[3 - count];
+                    } else {
+                        clearInterval(timer);
+                        numDisplay.innerText = "🦋";
+                        textDisplay.innerText = funnyTexts[3];
+                        
+                        setTimeout(() => {
+                            cdBox.style.opacity = '0';
+                            setTimeout(() => {
+                                cdBox.style.display = 'none';
+                                document.getElementById('music').play().catch(()=>{});
+                                createSakura();
+                                runSlides(); 
+                            }, 500);
+                        }, 800);
+                    }
+                }, 1000);
+            }, 800);
+        }
+
+        function updateBackground(index) {
+            document.querySelectorAll('.bg-full').forEach(bg => bg.classList.remove('active'));
+            const targetBg = document.getElementById(`bg${index}`);
+            if (targetBg) targetBg.classList.add('active');
+        }
+
+        function typeWriter(text, elementId, speed) {
+            let i = 0;
+            const element = document.getElementById(elementId);
+            element.innerHTML = ""; 
+            
+            function typing() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typing, speed);
+                }
+            }
+            typing();
+        }
+
+        function runSlides() {
+            if (current < totalSlides) {
+                updateBackground(current);
+
+                const slide = document.getElementById(`s${current}`);
+                slide.classList.add('active');
+
+                const currentWish = wishes[current];
+                const typingSpeed = 60; // Kecepatan ketik (ms)
+                
+                // Jalankan efek mengetik
+                typeWriter(currentWish, `type${current}`, typingSpeed);
+
+                // --- HITUNG DURASI TAMPIL OTOMATIS ---
+                // Waktu Ketik + Waktu Baca (4 detik ekstra)
+                const totalDisplayTime = (currentWish.length * typingSpeed) + 4000;
+
+                setTimeout(() => {
+                    slide.classList.remove('active');
+                    // Beri jeda transisi sedikit sebelum slide berikutnya muncul
+                    setTimeout(() => {
+                        current++;
+                        runSlides();
+                    }, 800);
+                }, totalDisplayTime); 
+
+            } else {
+                // Selesai, tampilkan Final Screen
+                document.getElementById('final-screen').classList.add('active');
+                confetti({ 
+                    particleCount: 200, 
+                    spread: 100, 
+                    origin: { y: 0.65 }, 
+                    colors: ['#da627d', '#ffb7c5', '#ffffff'] 
+                });
+            }
+        }
+
+        function createSakura() {
+            for (let i = 0; i < 35; i++) {
+                let petal = document.createElement('div');
+                petal.className = 'sakura';
+                petal.style.left = Math.random() * 100 + 'vw';
+                petal.style.width = Math.random() * 12 + 8 + 'px';
+                petal.style.height = petal.style.width;
+                petal.style.animationDuration = Math.random() * 3 + 4 + 's';
+                petal.style.animationDelay = Math.random() * 5 + 's';
+                document.body.appendChild(petal);
+            }
+        }
+    </script>
+</body>
+</html>
